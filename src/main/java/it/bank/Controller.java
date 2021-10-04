@@ -3,6 +3,7 @@ package it.bank;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,11 +66,11 @@ public class Controller {
 	}
 
 	@GetMapping(value="/listTransactions/{bankAccount}",produces="application/json")
-	public ResponseEntity<String> getTransations(@PathVariable String bankAccount) throws IOException{
+	public ResponseEntity<String> getTransations(@PathVariable String bankAccount,@PathVariable String fromDate,@PathVariable String toDate) throws IOException{
 
 		OkHttpClient client = new OkHttpClient();
 		Request request = new Request.Builder()
-				.url("https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/"+bankAccount+"/transactions?fromAccountingDate=2019-01-01&toAccountingDate=2019-12-01")
+				.url("https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/"+bankAccount+"/transactions?fromAccountingDate="+fromDate+"&toAccountingDate="+toDate+"")
 				.method("GET", null)
 				.addHeader("Content-Type", "application/json")
 				.addHeader("Auth-Schema", "S2S")
