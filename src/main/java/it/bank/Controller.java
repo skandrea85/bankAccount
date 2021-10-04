@@ -47,7 +47,7 @@ public class Controller {
 	}
 
 	@RequestMapping(value="/bonifico/{bankAccount}",produces="application/json")
-	public ResponseEntity<String> moneyTransfer(@PathVariable String bankAccount,@PathVariable String fiscaleCode,@PathVariable String amount,@PathVariable String currency ) throws IOException{
+	public ResponseEntity<String> moneyTransfer(@PathVariable String bankAccount ) throws IOException{
 
 		OkHttpClient client = new OkHttpClient();
 		MediaType mediaType = MediaType.parse("application/json");
@@ -65,7 +65,7 @@ public class Controller {
 
 	}
 
-	@GetMapping(value="/listTransactions/{bankAccount}",produces="application/json")
+	@GetMapping(value="/listTransactions/{bankAccount}/{fromDate}/{toDate}",produces="application/json")
 	public ResponseEntity<String> getTransations(@PathVariable String bankAccount,@PathVariable String fromDate,@PathVariable String toDate) throws IOException{
 
 		OkHttpClient client = new OkHttpClient();
