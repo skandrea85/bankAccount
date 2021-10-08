@@ -1,11 +1,14 @@
 package it.bank;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -37,10 +41,21 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
+import it.bank.model.Account;
+import it.bank.model.Creditor;
+import it.bank.model.MoneyTransfer;
+import it.bank.model.NaturalPersonBeneficiary;
+import it.bank.model.PayLoad;
+import it.bank.model.RootJson;
+import it.bank.model.TaxRelief;
+import it.bank.model.Transaction;
 import kong.unirest.json.JSONObject;
 import okio.BufferedSink;
 @RestController
 public class Controller {
+	
+	@Autowired
+	PersistanceBankService persistanceBankService;
 
 
 
@@ -74,7 +89,6 @@ public class Controller {
 		creditor.setAccount(account);
 
 		creditor.setName("LUCA TERRIBILE");
-
 
 		moneyTransfer.setAmount(amount);
 		moneyTransfer.setCreditor(creditor);
@@ -127,7 +141,31 @@ public class Controller {
 				.build();
 		Response response = client.newCall(request).execute();
 		String res =response.body().string();
-		return  new ResponseEntity<>(res, HttpStatus.MULTI_STATUS) ;
+		
+		
+		
+		GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
+		
+		
+		RootJson root= gson.fromJson(res, RootJson.class);
+		
+		try {
+			
+			persistanceBankService.saveAll(root.getPayload().getList());
+		}
+		
+		catch(Exception ex) {
+			ex.printStackTrace();
+
+		}
+		
+		
+			
+		return  new ResponseEntity<>(res, HttpStatus.MULTI_STATUS);
+		
+		
+		
 
 	}
 
